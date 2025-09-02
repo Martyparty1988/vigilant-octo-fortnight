@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Fofr Pedro</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Fofr Pedro">
+    <meta name="theme-color" content="#0a192f">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192x192.svg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+
+    <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^0.7.0",
+    "three": "https://esm.sh/three@0.165.0",
+    "three/addons/": "https://esm.sh/three@0.165.0/examples/jsm/",
+    "three/": "https://aistudiocdn.com/three@^0.179.1/",
+    "vite": "https://aistudiocdn.com/vite@^7.1.4",
+    "path": "https://aistudiocdn.com/path@^0.12.7"
+  }
+}
+</script>
+    <script type="module" src="index.tsx"></script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="game-canvas"></canvas>
+
+        <div id="hud">
+            <div id="score-hud-item" class="hud-item score-container">
+                <span id="score-icon"></span>
+                <span id="score">0</span>
+            </div>
+            <div id="health-hud-item" class="hud-item health-container">
+                <span id="health-icon"></span>
+                <span id="health">3</span>
+            </div>
+            <div class="hud-item-right">
+                 <button id="pause-button" class="ui-button" aria-label="Pozastavit hru"></button>
+            </div>
+        </div>
+
+        <div id="main-menu" class="glass-panel active">
+            <h1 class="game-title">Fofr Pedro</h1>
+            <p class="game-subtitle">Neonová jízda Prahou</p>
+            <button id="start-game-button" class="ui-button large-button">
+                <span id="play-icon-menu"></span>
+                <span>Spustit Jízdu</span>
+            </button>
+            <div class="menu-buttons">
+                <button id="leaderboard-button" class="ui-button" aria-label="Žebříček"></button>
+                <button id="show-preview-button" class="ui-button" aria-label="Prohlížeč Modelů"></button>
+                <button id="settings-button" class="ui-button" aria-label="Nastavení"></button>
+            </div>
+        </div>
+
+        <div id="pause-menu" class="glass-panel">
+            <h2 class="menu-title">Pauza</h2>
+            <p>Dáváš si čouda?</p>
+            <button id="resume-game-button" class="ui-button large-button">
+                <span id="play-icon-pause"></span>
+                <span>Pokračovat</span>
+            </button>
+            <button id="main-menu-button" class="ui-button">Zpět do Menu</button>
+        </div>
+
+        <div id="game-over-screen" class="glass-panel">
+            <h2 class="menu-title">Chytli Tě!</h2>
+            <p id="game-over-quote" class="quote-text">Příště běž jinudy!</p>
+            <div class="score-summary">
+                <p>Tvoje Skóre: <span id="final-score">0</span></p>
+                <p>Nejlepší Jízda: <span id="high-score">0</span></p>
+            </div>
+            <button id="restart-game-button" class="ui-button large-button">
+                 <span id="restart-icon-gameover"></span>
+                <span>Zkusit Znovu</span>
+            </button>
+        </div>
+
+        <div id="message-display" class="message"></div>
+        
+        <div id="preview-container" style="display: none;">
+            <canvas id="preview-canvas" width="960" height="540"></canvas>
+            <div class="preview-ui-top">
+                <button id="back-to-menu-button" class="ui-button"></button>
+                <button id="toggle-collision-button" class="ui-button"></button>
+            </div>
+            <div id="model-info-display" class="glass-panel"></div>
+        </div>
+    </div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>

@@ -1,0 +1,370 @@
+/* --- Globální nastavení a proměnné --- */
+:root {
+    --primary-dark: #0a192f;
+    --neon-blue: #00f6ff;
+    --neon-purple: #a855f7;
+    --neon-yellow: #fde047;
+    --light-text: #ccd6f6;
+    --dark-text: #8892b0;
+    --glass-bg: rgba(17, 24, 39, 0.5);
+    --glass-border: rgba(253, 224, 71, 0.3);
+    
+    --font-header: 'Teko', sans-serif;
+    --font-body: 'Share Tech Mono', monospace;
+
+    /* Safe areas for iPhone notch */
+    --safe-area-top: env(safe-area-inset-top, 20px);
+    --safe-area-bottom: env(safe-area-inset-bottom, 20px);
+    --safe-area-left: env(safe-area-inset-left, 20px);
+    --safe-area-right: env(safe-area-inset-right, 20px);
+}
+
+/* --- Základní styly --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--primary-dark);
+    color: var(--light-text);
+    font-family: var(--font-body);
+    -webkit-tap-highlight-color: transparent; /* Disable tap highlight on iOS */
+}
+
+#game-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#game-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #0a192f 0%, #172a46 70%, #303C55 100%);
+}
+
+/* --- HUD (Heads-Up Display) --- */
+#hud {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 15px;
+    padding-top: calc(15px + var(--safe-area-top));
+    padding-left: calc(15px + var(--safe-area-left));
+    padding-right: calc(15px + var(--safe-area-right));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.hud-item {
+    display: flex;
+    align-items: center;
+    font-size: 2rem;
+    font-family: var(--font-header);
+    letter-spacing: 1px;
+    background: var(--glass-bg);
+    padding: 5px 20px;
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    transition: all 0.2s ease-out; /* Pro efekt pulzování */
+}
+
+#score-hud-item {
+    color: var(--neon-yellow);
+    text-shadow: 0 0 8px var(--neon-yellow);
+}
+#score-hud-item svg {
+    fill: var(--neon-yellow);
+    filter: drop-shadow(0 0 5px var(--neon-yellow));
+}
+
+#health-hud-item {
+     color: var(--neon-blue);
+     text-shadow: 0 0 8px var(--neon-blue);
+}
+#health-hud-item svg {
+    fill: var(--neon-blue);
+    filter: drop-shadow(0 0 5px var(--neon-blue));
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); box-shadow: 0 0 20px currentColor; }
+    100% { transform: scale(1); }
+}
+
+.hud-item.pulsate {
+    animation: pulse 0.4s ease-out;
+}
+
+.hud-item-right {
+    pointer-events: all;
+}
+
+.hud-item span {
+    margin-left: 10px;
+}
+
+.hud-item svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* --- Glassmorphism Panely (Menu, Game Over) --- */
+.glass-panel {
+    position: absolute;
+    width: calc(100% - 40px);
+    max-width: 380px;
+    padding: 30px;
+    padding-bottom: calc(30px + var(--safe-area-bottom));
+    background: var(--glass-bg);
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    z-index: 20;
+    display: none; /* Skryto defaultně */
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    animation: fadeIn 0.5s ease-out;
+    border: 1px solid transparent;
+    background-clip: padding-box;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2), 
+                inset 0 0 0 1px var(--glass-border);
+}
+
+.glass-panel.active {
+    display: flex;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.game-title {
+    font-family: var(--font-header);
+    font-size: 5rem;
+    color: var(--neon-yellow);
+    text-shadow: 0 0 10px var(--neon-yellow), 0 0 25px var(--neon-yellow);
+    margin-bottom: -10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.game-subtitle {
+    font-size: 1.1rem;
+    color: var(--dark-text);
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+}
+
+.menu-title {
+    font-family: var(--font-header);
+    font-size: 3rem;
+    color: var(--neon-purple);
+    text-shadow: 0 0 8px var(--neon-purple);
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.quote-text, .score-summary p {
+    font-size: 1.1rem;
+    color: var(--light-text);
+    margin-bottom: 15px;
+}
+
+.score-summary {
+    margin: 20px 0;
+    font-size: 1.2rem;
+}
+.score-summary span {
+    font-family: var(--font-header);
+    color: var(--neon-yellow);
+    font-size: 1.5rem;
+}
+
+
+/* --- Tlačítka --- */
+.ui-button {
+    position: relative;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 10px 25px;
+    font-family: var(--font-header);
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    color: var(--light-text);
+    background: transparent;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;
+    -webkit-mask-image: -webkit-radial-gradient(white, black); /* Fix for border-radius clipping */
+}
+
+.ui-button::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 30px;
+    border: 2px solid transparent;
+    background: linear-gradient(45deg, var(--neon-purple), var(--neon-blue)) border-box;
+    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    mask-composite: destination-out;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    transition: all 0.2s ease;
+}
+
+.ui-button:hover::before {
+    background: linear-gradient(45deg, var(--neon-yellow), var(--neon-blue)) border-box;
+    box-shadow: 0 0 15px var(--neon-blue), 0 0 15px var(--neon-purple);
+}
+
+.ui-button span {
+    z-index: 1;
+}
+.ui-button svg {
+    z-index: 1;
+}
+
+.ui-button:hover, .ui-button:focus {
+    color: white;
+    transform: translateY(-2px);
+    text-shadow: 0 0 5px white;
+}
+
+.ui-button:active {
+    transform: translateY(0px) scale(0.98);
+    transition-duration: 0.1s;
+}
+
+.large-button {
+    font-size: 1.6rem;
+    padding: 15px 35px;
+    margin: 20px 0;
+}
+
+.menu-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Styly pro ikony v tlačítkách */
+.ui-button svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--light-text);
+    transition: all 0.3s ease;
+}
+
+.ui-button:hover svg, .ui-button:focus svg {
+    fill: white;
+    filter: drop-shadow(0 0 5px white);
+}
+
+#pause-button::before {
+     background: linear-gradient(45deg, var(--neon-blue), var(--neon-yellow)) border-box;
+}
+
+
+/* --- Zprávy ve hře --- */
+#message-display {
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px 25px;
+    font-family: var(--font-header);
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+    color: var(--neon-blue);
+    text-shadow: 0 0 8px var(--neon-blue);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
+    backdrop-filter: blur(5px);
+    opacity: 0;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    pointer-events: none;
+    z-index: 50;
+}
+
+#message-display.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-20px);
+}
+
+/* --- 3D Preview Scene --- */
+#preview-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+    background-color: #222222;
+}
+
+#preview-canvas {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    cursor: pointer;
+}
+
+.preview-ui-top {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    top: calc(15px + var(--safe-area-top));
+    left: calc(15px + var(--safe-area-left));
+    z-index: 110;
+    display: flex;
+    gap: 10px;
+}
+
+#model-info-display {
+    position: absolute;
+    bottom: 20px;
+    bottom: calc(20px + var(--safe-area-bottom));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 110;
+    padding: 15px 30px;
+    max-width: 90%;
+    display: none; /* Initially hidden */
+    font-family: var(--font-header);
+    font-size: 1.8rem;
+    color: var(--neon-yellow);
+    text-shadow: 0 0 8px var(--neon-yellow);
+}
+
+#model-info-display.active {
+    display: flex;
+}
